@@ -1,151 +1,20 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QR-Code Generator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .container {
-      background: white;
-      padding: 20px 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      text-align: center;
-      width: 350px;
-    }
-
-    h1 {
-      margin-bottom: 15px;
-      color: #333;
-    }
-
-    input, button {
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
-
-    button {
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-      border: none;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    .color-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .color-row label {
-      flex: 1;
-      text-align: left;
-      font-size: 0.9rem;
-    }
-
-    .color-row input {
-      flex: 1;
-      cursor: pointer;
-    }
-
-    canvas {
-      margin-top: 15px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>QR Generator Test</title>
 </head>
 <body>
-  <div class="container">
-    <h1>QR-Code Generator</h1>
-    <input type="text" id="urlInput" placeholder="https://example.com" />
+  <input id="urlInput" placeholder="https://example.com">
+  <button id="generateBtn">QR erzeugen</button>
+  <canvas id="qrCanvas"></canvas>
 
-    <div class="color-row">
-      <label for="qrColor">QR-Farbe:</label>
-      <input type="color" id="qrColor" value="#000000" />
-    </div>
-
-    <div class="color-row">
-      <label for="bgColor">Hintergrund:</label>
-      <input type="color" id="bgColor" value="#ffffff" />
-    </div>
-
-    <label for="iconInput" style="font-size: 0.9rem;">Icon (optional):</label>
-    <input type="file" id="iconInput" accept="image/*" />
-
-    <button id="generateBtn">QR-Code generieren</button>
-    <canvas id="qrCanvas"></canvas>
-    <button id="downloadBtn" style="display:none;">QR-Code herunterladen</button>
-  </div>
-
-  <!-- QR-Code Library -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
-    const generateBtn = document.getElementById('generateBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const canvas = document.getElementById('qrCanvas');
-    const iconInput = document.getElementById('iconInput');
-
-    generateBtn.addEventListener('click', async () => {
+    document.getElementById('generateBtn').addEventListener('click', async () => {
       const url = document.getElementById('urlInput').value.trim();
-      const qrColor = document.getElementById('qrColor').value;
-      const bgColor = document.getElementById('bgColor').value;
-
-      if (!url) {
-        alert('Bitte gib eine URL ein.');
-        return;
-      }
-
-      // QR-Code generieren
-      await QRCode.toCanvas(canvas, url, {
-        width: 250,
-        color: {
-          dark: qrColor,
-          light: bgColor
-        }
-      });
-
-      // Wenn ein Icon hochgeladen wurde, einfügen
-      const file = iconInput.files[0];
-      if (file) {
-        const ctx = canvas.getContext('2d');
-        const img = new Image();
-        img.src = URL.createObjectURL(file);
-        img.onload = () => {
-          const iconSize = canvas.width * 0.2; // 20% der QR-Größe
-          const x = (canvas.width - iconSize) / 2;
-          const y = (canvas.height - iconSize) / 2;
-          ctx.drawImage(img, x, y, iconSize, iconSize);
-          URL.revokeObjectURL(img.src);
-        };
-      }
-
-      downloadBtn.style.display = 'block';
-    });
-
-    // Download-Funktion
-    downloadBtn.addEventListener('click', () => {
-      const link = document.createElement('a');
-      link.download = 'qr-code.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+      if (!url) return alert("Bitte gib eine URL ein.");
+      await QRCode.toCanvas(document.getElementById('qrCanvas'), url, { width: 200 });
     });
   </script>
 </body>
